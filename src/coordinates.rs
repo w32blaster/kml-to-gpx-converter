@@ -18,11 +18,11 @@ fn parse_coordinates(raw_list: String) -> Vec<Coordinate> {
             continue
         }
 
-        println!("ROW: '{}'", row);
         let part:Vec<&str> = row.split(",").collect();
         let lon:f32 = String::from(part[0]).parse::<f32>().unwrap();
         let lat:f32 = String::from(part[1]).parse::<f32>().unwrap();
-        v.push(Coordinate{longitude: lon, latitude: lat, altitude: 0});
+        let alt:i32 = String::from(part[2]).parse::<i32>().unwrap();
+        v.push(Coordinate{longitude: lon, latitude: lat, altitude: alt});
     }
 
     return v;
