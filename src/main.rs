@@ -1,7 +1,6 @@
 
 extern crate serde;
 extern crate serde_xml_rs;
-extern crate xml;
 
 #[macro_use]
 extern crate serde_derive;

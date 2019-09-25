@@ -71,7 +71,7 @@ pub fn parse_source() -> Vec<UniversalPoint> {
                         latitude: c.latitude, 
                         altitude: c.altitude,
                         description: "".to_string(),
-                        name: "".to_string(),
+                        name: (*placemark).name.to_string(),
                     });
                 }
             }
@@ -86,7 +86,7 @@ pub fn parse_source() -> Vec<UniversalPoint> {
                         latitude: c.latitude, 
                         altitude: c.altitude,
                         description: "".to_string(),
-                        name: (*placemark).name.to_string(),
+                        name: "".to_string(),
                     });
                 }
             }
