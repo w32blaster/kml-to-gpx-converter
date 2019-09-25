@@ -9,6 +9,8 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
+mod coordinates;
+
 const PATH_SOURCE_FILE: &str = "/Users/ilja.hamalainen/Downloads/DirectiosFromClarendonHotelToPrincessStreetCarPark.kml";
 
 #[derive(Deserialize, Debug)]
@@ -49,6 +51,7 @@ struct Point {
     pub coordinates: String,
 }
 
+
 fn main() {
     println!("Let's parse the source KML file");
 
@@ -73,3 +76,4 @@ fn read_source_file() -> std::io::Result<String> {
     buf_reader.read_to_string(&mut contents)?;
     Ok(contents)
 }
+
