@@ -6,10 +6,14 @@ pub struct Coordinate {
    pub altitude: i32, // in meters above sea level, optional
 }
 
-pub fn parse_coordinates(raw_list: String, v: &mut Vec<Coordinate> ) {
+// we expect here something like "-2.9293918,54.5709437,0"
+// Please refer to unit tests below
+pub fn parse_coordinates(raw_list: String) -> Vec<Coordinate> {
+    
+    let mut coordinates: Vec<Coordinate> = Vec::new();
     
     if raw_list.len() == 0 {
-        return;
+        return coordinates;
     }
 
     for row in raw_list.split("\n") {
@@ -22,19 +26,20 @@ pub fn parse_coordinates(raw_list: String, v: &mut Vec<Coordinate> ) {
         let lon:f32 = String::from(part[0]).parse::<f32>().unwrap();
         let lat:f32 = String::from(part[1]).parse::<f32>().unwrap();
         let alt:i32 = String::from(part[2]).parse::<i32>().unwrap();
-        (*v).push(Coordinate{longitude: lon, latitude: lat, altitude: alt});
+        coordinates.push(Coordinate{longitude: lon, latitude: lat, altitude: alt});
     }
+
+    return coordinates;
 }
 
 #[test]
 fn test_empty_list() {
 
     // Given:
-    let mut coordinates: Vec<Coordinate> = Vec::new();
     let xml = "".to_string();
 
     // When:
-    parse_coordinates(xml, &mut coordinates);
+    let coordinates = parse_coordinates(xml);
 
     // Then:
     assert_eq!(coordinates.len(), 0);
@@ -43,15 +48,13 @@ fn test_empty_list() {
 #[test]
 fn test_one_coordinate() {
 
-    let mut coordinates: Vec<Coordinate> = Vec::new();
-
     // Given
     let xml = "
     -2.9293918,54.5709437,0
     ".to_string();
 
     // When
-    parse_coordinates(xml, &mut coordinates);
+    let coordinates = parse_coordinates(xml);
 
     // Then
     assert_eq!(coordinates.len(), 1);
@@ -65,8 +68,6 @@ fn test_one_coordinate() {
 
 #[test]
 fn test_few_coordinates() {
-
-    let mut coordinates: Vec<Coordinate> = Vec::new();
 
     // Given
     let xml = "
@@ -83,7 +84,7 @@ fn test_few_coordinates() {
     ".to_string();
 
     // When
-    parse_coordinates(xml, &mut coordinates);
+    let coordinates = parse_coordinates(xml);
 
     // Then
     assert_eq!(coordinates.len(), 10);

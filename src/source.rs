@@ -1,88 +1,99 @@
 
-use serde_xml_rs::from_reader;
 
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
+use crate::commons::UniversalPoint;
 
-pub mod coordinates;
+mod coordinates;
 
 const PATH_SOURCE_FILE: &str = "/Users/ilja.hamalainen/Downloads/DirectiosFromClarendonHotelToPrincessStreetCarPark.kml";
 
 #[derive(Deserialize, Debug)]
-pub struct KmlRoot {
+struct KmlRoot {
     #[serde(rename="Document")]
-    pub document: Document,
+    document: Document,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Document {
+struct Document {
     #[serde(rename="Placemark")]
-    pub placemark: Vec<Placemark>,
-    pub name: String,
-
+    placemark: Vec<Placemark>,
+    name: String,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Placemark {
-    pub name: String,
+struct Placemark {
+    name: String,
     #[serde(rename="styleUrl")]
-    pub style_url: String,
+    style_url: String,
     
     #[serde(rename="LineString", default)]
-    pub line_strings: Vec<LineString>,
+    line_strings: Vec<LineString>,
 
     #[serde(rename="Point", default)]
-    pub points: Vec<Point>,
+    points: Vec<Point>,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct LineString {
-    pub tessellate: i8,
-    pub coordinates: String,
-
-    #[serde(default)]
-    pub coordinates_parsed: Vec<coordinates::Coordinate>, // multiple coordinates
+struct LineString {
+    tessellate: i8,
+    coordinates: String,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Point {
-    pub coordinates: String,
-
-    #[serde(default)]
-    pub coordinates_parsed: coordinates::Coordinate, // single tuple
+struct Point {
+    coordinates: String,
 }
 
-pub fn parse_source() -> KmlRoot {
+pub fn parse_source() -> Vec<UniversalPoint> {
 
+    // 1. Open the file and read it raw content, then parse it
     let res = read_source_file();
-    let mut root: KmlRoot = match res {
-        Ok(c) => from_reader(c.as_bytes()).unwrap(),
+    let root: KmlRoot = match res {
+        Ok(c) => serde_xml_rs::from_reader(c.as_bytes()).unwrap(),
         Err(error) => {
             panic!("Problem opening the source file: {:?}", error)
         },
     };
 
-    for placemark in &mut root.document.placemark {
+   // 2. Build the vector of universal points
+    let mut uni_points: Vec<UniversalPoint> = Vec::new();
 
+    for placemark in &root.document.placemark {
         if placemark.points.len() > 0 {
-            for mut point in &mut placemark.points {
-                let mut coordinates: Vec<coordinates::Coordinate> = Vec::new();
-                coordinates::parse_coordinates(String::from(&point.coordinates), &mut coordinates);
-                point.coordinates_parsed = coordinates[0];
+
+            for point in &placemark.points {
+                let coordinates = coordinates::parse_coordinates(String::from(&point.coordinates));
+                for c in coordinates {
+                    uni_points.push(UniversalPoint{
+                        longitude: c.longitude, 
+                        latitude: c.latitude, 
+                        altitude: c.altitude,
+                        description: "".to_string(),
+                        name: "".to_string(),
+                    });
+                }
             }
         }
         
         if placemark.line_strings.len() > 0 {
-            for mut lstrings in &mut placemark.line_strings {
-               let mut coordinates: Vec<coordinates::Coordinate> = Vec::new();
-               coordinates::parse_coordinates(String::from(&lstrings.coordinates), &mut coordinates);
-               lstrings.coordinates_parsed = coordinates;
+            for lstrings in &placemark.line_strings {
+               let coordinates = coordinates::parse_coordinates(String::from(&lstrings.coordinates));
+                for c in coordinates {
+                    uni_points.push(UniversalPoint{
+                        longitude: c.longitude, 
+                        latitude: c.latitude, 
+                        altitude: c.altitude,
+                        description: "".to_string(),
+                        name: (*placemark).name.to_string(),
+                    });
+                }
             }
         }
     }
 
-    return root;
+    return uni_points;
 }
 
 // read the source file and returns its content as a string
