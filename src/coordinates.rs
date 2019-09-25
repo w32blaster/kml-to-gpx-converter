@@ -1,5 +1,5 @@
 
-#[derive(Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default, Copy, Clone)]
 pub struct Coordinate {
    pub longitude: f32, // between  −180 and 180
    pub latitude: f32, // between -90 and 90
