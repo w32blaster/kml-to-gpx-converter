@@ -44,11 +44,17 @@ struct Placemark {
 struct LineString {
     pub tessellate: i8,
     pub coordinates: String,
+
+    #[serde(default)]
+    pub coordinates_parsed: Vec<coordinates::Coordinate>, // multiple coordinates
 }
 
 #[derive(Deserialize, Debug)]
 struct Point {
     pub coordinates: String,
+
+    #[serde(default)]
+    pub coordinates_parsed: coordinates::Coordinate, // single tuple
 }
 
 
@@ -58,12 +64,33 @@ fn main() {
 
     // 1. read the source file and parse it
     let res = read_source_file();
-    let root: KmlRoot = match res {
+    let mut root: KmlRoot = match res {
         Ok(c) => from_reader(c.as_bytes()).unwrap(),
         Err(error) => {
             panic!("Problem opening the source file: {:?}", error)
         },
     };
+
+    for placemark in &mut root.document.placemark {
+
+    /*
+        if placemark.points.len() > 0 {
+            for point in &placemark.points {
+                let mut coordinates: Vec<coordinates::Coordinate> = Vec::new();
+                coordinates::parse_coordinates(point.coordinates, &mut coordinates);
+                //point.coordinates_parsed = coordinates[0];
+            }
+        }
+        */
+
+        if placemark.line_strings.len() > 0 {
+            for mut lstrings in &mut placemark.line_strings {
+               let mut coordinates: Vec<coordinates::Coordinate> = Vec::new();
+               coordinates::parse_coordinates(String::from(&lstrings.coordinates), &mut coordinates);
+               lstrings.coordinates_parsed = coordinates;
+            }
+        }
+    }
 
     println!("{:?}", root);
 }
