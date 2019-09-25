@@ -11,7 +11,6 @@ use std::io::prelude::*;
 
 const PATH_SOURCE_FILE: &str = "/Users/ilja.hamalainen/Downloads/DirectiosFromClarendonHotelToPrincessStreetCarPark.kml";
 
-
 #[derive(Deserialize, Debug)]
 struct KmlRoot {
     #[serde(rename="Document")]
@@ -28,11 +27,27 @@ struct Document {
 
 #[derive(Deserialize, Debug)]
 struct Placemark {
-    name: String,
+    pub name: String,
     #[serde(rename="styleUrl")]
-    style_url: String,
+    pub style_url: String,
+    
+    #[serde(rename="LineString", default)]
+    pub line_strings: Vec<LineString>,
+
+    #[serde(rename="Point", default)]
+    pub points: Vec<Point>,
 }
 
+#[derive(Deserialize, Debug)]
+struct LineString {
+    pub tessellate: i8,
+    pub coordinates: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct Point {
+    pub coordinates: String,
+}
 
 fn main() {
     println!("Let's parse the source KML file");
