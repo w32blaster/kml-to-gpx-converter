@@ -61,3 +61,68 @@ fn test_one_coordinate() {
     assert_eq!(coordinates[0].altitude, 0);
 }
 
+
+#[test]
+fn test_few_coordinates() {
+
+    // Given
+    let xml = "
+          -2.80211,54.63673,0
+          -2.80207,54.63673,0
+          -2.80172,54.63678,0
+          -2.80137,54.63679,0
+          -2.80044,54.63674,0
+          -2.79985,54.63674,0
+          -2.79923,54.63682,0
+          -2.79858,54.63697,0
+          -2.79746,54.63731,0
+          -2.79613,54.63776,0
+    ".to_string();
+
+    // When
+    let coordinates = parse_coordinates(xml);
+
+    // Then
+    assert_eq!(coordinates.len(), 10);
+    
+    // and
+    assert_eq!(coordinates[0].longitude, -2.80211);
+    assert_eq!(coordinates[0].latitude, 54.63673);
+    assert_eq!(coordinates[0].altitude, 0);
+
+    assert_eq!(coordinates[1].longitude, -2.80207);
+    assert_eq!(coordinates[1].latitude, 54.63673);
+    assert_eq!(coordinates[1].altitude, 0);
+
+    assert_eq!(coordinates[2].longitude, -2.80172);
+    assert_eq!(coordinates[2].latitude, 54.63678);
+    assert_eq!(coordinates[2].altitude, 0);
+
+    assert_eq!(coordinates[3].longitude, -2.80137);
+    assert_eq!(coordinates[3].latitude, 54.63679);
+    assert_eq!(coordinates[3].altitude, 0);
+
+    assert_eq!(coordinates[4].longitude, -2.80044);
+    assert_eq!(coordinates[4].latitude, 54.63674);
+    assert_eq!(coordinates[4].altitude, 0);
+
+    assert_eq!(coordinates[5].longitude, -2.79985);
+    assert_eq!(coordinates[5].latitude, 54.63674);
+    assert_eq!(coordinates[5].altitude, 0);
+
+    assert_eq!(coordinates[6].longitude, -2.79923);
+    assert_eq!(coordinates[6].latitude, 54.63682);
+    assert_eq!(coordinates[6].altitude, 0);
+
+    assert_eq!(coordinates[7].longitude, -2.79858);
+    assert_eq!(coordinates[7].latitude, 54.63697);
+    assert_eq!(coordinates[7].altitude, 0);
+
+    assert_eq!(coordinates[8].longitude, -2.79746);
+    assert_eq!(coordinates[8].latitude, 54.63731);
+    assert_eq!(coordinates[8].altitude, 0);
+
+    assert_eq!(coordinates[9].longitude, -2.79613);
+    assert_eq!(coordinates[9].latitude, 54.63776);
+    assert_eq!(coordinates[9].altitude, 0);
+}
