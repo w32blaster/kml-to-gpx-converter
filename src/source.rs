@@ -46,7 +46,7 @@ struct Point {
     coordinates: String,
 }
 
-pub fn parse_source() -> Vec<UniversalPoint> {
+pub fn parse_source() -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
 
     // 1. Open the file and read it raw content, then parse it
     let res = read_source_file();
@@ -57,16 +57,17 @@ pub fn parse_source() -> Vec<UniversalPoint> {
         },
     };
 
-   // 2. Build the vector of universal points
-    let mut uni_points: Vec<UniversalPoint> = Vec::new();
-
+    // 2. Build the vector of universal points
+    let mut uni_points_track: Vec<UniversalPoint> = Vec::new();
+    let mut uni_points_pois: Vec<UniversalPoint> = Vec::new();
     for placemark in &root.document.placemark {
-        if placemark.points.len() > 0 {
 
+        // collect al the POIs
+        if placemark.points.len() > 0 {
             for point in &placemark.points {
                 let coordinates = coordinates::parse_coordinates(String::from(&point.coordinates));
                 for c in coordinates {
-                    uni_points.push(UniversalPoint{
+                    uni_points_pois.push(UniversalPoint{
                         longitude: c.longitude, 
                         latitude: c.latitude, 
                         altitude: c.altitude,
@@ -74,14 +75,15 @@ pub fn parse_source() -> Vec<UniversalPoint> {
                         name: (*placemark).name.to_string(),
                     });
                 }
-            }
+            }    
         }
         
+        // Collect all the points for a track
         if placemark.line_strings.len() > 0 {
             for lstrings in &placemark.line_strings {
                let coordinates = coordinates::parse_coordinates(String::from(&lstrings.coordinates));
                 for c in coordinates {
-                    uni_points.push(UniversalPoint{
+                    uni_points_track.push(UniversalPoint{
                         longitude: c.longitude, 
                         latitude: c.latitude, 
                         altitude: c.altitude,
@@ -93,7 +95,7 @@ pub fn parse_source() -> Vec<UniversalPoint> {
         }
     }
 
-    return uni_points;
+    return (uni_points_track, uni_points_pois);
 }
 
 // read the source file and returns its content as a string

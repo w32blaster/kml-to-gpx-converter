@@ -10,12 +10,11 @@ mod source;
 mod output;
 
 fn main() {
-    println!("Let's parse the source KML file");
 
     // 1. read the source file and parse it
-    let root = source::parse_source();
+    let (track_points, pois) = source::parse_source();
 
     // 2. write data to the output GPX file 
-    output::write_gpx_from(root);
+    output::write_gpx_from(track_points, pois);
 }
 
