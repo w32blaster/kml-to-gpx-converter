@@ -3,9 +3,9 @@
 use crate::commons::UniversalPoint;
 
 const XML_PREFIX: &str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpsies=\"https://www.gpsies.com/GPX/1/0\" 
-   version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" 
-   xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://www.gpsies.com/GPX/1/0 https://www.gpsies.com/gpsies.xsd\">
+<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpsies=\"https://www.gpsies.com/GPX/1/0\" creator=\"AllTrails https://www.alltrails.com\" 
+  version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" 
+  xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://www.gpsies.com/GPX/1/0 https://www.gpsies.com/gpsies.xsd\">
   <metadata>
     <name>Test route</name>
     <time>2019-09-20T11:29:31Z</time>

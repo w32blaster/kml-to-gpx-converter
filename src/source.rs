@@ -7,8 +7,6 @@ use crate::commons::UniversalPoint;
 
 mod coordinates;
 
-const PATH_SOURCE_FILE: &str = "/Users/ilja.hamalainen/Downloads/DirectiosFromClarendonHotelToPrincessStreetCarPark.kml";
-
 #[derive(Deserialize, Debug)]
 struct KmlRoot {
     #[serde(rename="Document")]
@@ -46,10 +44,10 @@ struct Point {
     coordinates: String,
 }
 
-pub fn parse_source() -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
+pub fn parse_source(file_path: String) -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
 
     // 1. Open the file and read it raw content, then parse it
-    let res = read_source_file();
+    let res = read_source_file(file_path);
     let root: KmlRoot = match res {
         Ok(c) => serde_xml_rs::from_reader(c.as_bytes()).unwrap(),
         Err(error) => {
@@ -65,7 +63,7 @@ pub fn parse_source() -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
         // collect al the POIs
         if placemark.points.len() > 0 {
             for point in &placemark.points {
-                let coordinates = coordinates::parse_coordinates(String::from(&point.coordinates));
+                let coordinates = coordinates::parse_coordinates(point.coordinates.clone());
                 for c in coordinates {
                     uni_points_pois.push(UniversalPoint{
                         longitude: c.longitude, 
@@ -81,7 +79,7 @@ pub fn parse_source() -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
         // Collect all the points for a track
         if placemark.line_strings.len() > 0 {
             for lstrings in &placemark.line_strings {
-               let coordinates = coordinates::parse_coordinates(String::from(&lstrings.coordinates));
+               let coordinates = coordinates::parse_coordinates(lstrings.coordinates.clone());
                 for c in coordinates {
                     uni_points_track.push(UniversalPoint{
                         longitude: c.longitude, 
@@ -99,8 +97,8 @@ pub fn parse_source() -> (Vec<UniversalPoint>, Vec<UniversalPoint>) {
 }
 
 // read the source file and returns its content as a string
-fn read_source_file() -> std::io::Result<String> {
-    let file = File::open(PATH_SOURCE_FILE).expect("Failed to open source file");
+fn read_source_file(file_path: String) -> std::io::Result<String> {
+    let file = File::open(file_path).expect("Failed to open source file");
     let mut buf_reader = BufReader::new(file);
     let mut contents = String::new();
     buf_reader.read_to_string(&mut contents)?;
